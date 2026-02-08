@@ -3,563 +3,372 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentinstag</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <title>Handwerk Lernen - Schritt für Schritt Anleitungen</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-dark: #0a0a0a;
-            --bg-mid: #1a1a1a;
-            --accent: #ff1493;
-            --accent-light: #ff69b4;
-            --text-muted: #666;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: var(--bg-dark);
-            color: var(--accent-light);
-            font-family: 'Cormorant Garamond', serif;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
         }
-
-        section {
-            min-height: 100vh;
+        header {
+            background: #1f1f1f;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        h1 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+        }
+        .search-container { max-width: 600px; margin: 1rem auto; position: relative; }
+        #searchInput {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            background: #2d2d2d;
+            border: 2px solid #444;
+            border-radius: 25px;
+            color: #e0e0e0;
+            transition: all 0.3s;
+        }
+        #searchInput:focus { outline: none; border-color: #666; background: #333; }
+        #searchInput::placeholder { color: #888; }
+        .category-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .category-btn {
+            padding: 0.5rem 1rem;
+            background: #2d2d2d;
+            border: 2px solid #444;
+            border-radius: 20px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .category-btn:hover { background: #3d3d3d; border-color: #666; }
+        .category-btn.active { background: #4a4a4a; border-color: #777; }
+        .crafts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .craft-card {
+            background: #2d2d2d;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .craft-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+        }
+        .craft-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #3d3d3d, #4d4d4d);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 4rem 2rem;
-            position: relative;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 1.2s ease, transform 1.2s ease;
+            font-size: 4rem;
         }
-
-        section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Hero Section */
-        .hero {
-            flex-direction: column;
-            text-align: center;
-            background: radial-gradient(ellipse at center, rgba(255, 20, 147, 0.1) 0%, transparent 70%);
-        }
-
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(3rem, 10vw, 8rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 0.9;
-            margin-bottom: 2rem;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero .date {
-            font-size: clamp(1.5rem, 3vw, 2.5rem);
-            font-weight: 300;
-            letter-spacing: 0.3em;
-            color: var(--text-muted);
-            margin-top: 1rem;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.9rem;
-            letter-spacing: 0.2em;
-            color: var(--text-muted);
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translate(-50%, 0); }
-            50% { transform: translate(-50%, 10px); }
-        }
-
-        /* Content Sections */
-        .content-box {
-            max-width: 800px;
-            text-align: center;
-        }
-
-        .content-box h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem, 5vw, 4rem);
-            font-weight: 400;
-            margin-bottom: 2rem;
-            color: var(--accent);
-        }
-
-        .content-box p {
-            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-            line-height: 1.8;
-            font-weight: 300;
-            color: var(--accent-light);
-        }
-
-        /* Interactive Elements */
-        .interactive-section {
-            flex-direction: column;
-            gap: 3rem;
-        }
-
-        .counter-display {
-            font-size: clamp(4rem, 10vw, 8rem);
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 2rem 0;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .counter-display:hover {
-            transform: scale(1.1);
-        }
-
-        .subtle-button {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent-light);
-            padding: 1rem 3rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.2rem;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .subtle-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--accent);
-            transition: left 0.4s ease;
-            z-index: -1;
-        }
-
-        .subtle-button:hover::before {
-            left: 0;
-        }
-
-        .subtle-button:hover {
-            color: var(--bg-dark);
-            border-color: var(--accent);
-        }
-
-        /* Canvas Background */
-        #particleCanvas {
+        .craft-content { padding: 1rem; }
+        .craft-title { color: #ffffff; font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .craft-category { color: #999; font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .craft-description { color: #b0b0b0; font-size: 0.9rem; }
+        .modal {
+            display: none;
             position: fixed;
-            top: 0;
+            z-index: 2000;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.3;
-        }
-
-        /* Reveal Text */
-        .reveal-text {
-            font-size: clamp(1.5rem, 3vw, 2.5rem);
-            font-style: italic;
-            line-height: 2;
-            max-width: 600px;
-            margin: 2rem auto;
-            opacity: 0;
-            transition: opacity 0.6s ease;
-        }
-
-        .reveal-text.show {
-            opacity: 1;
-        }
-
-        /* Memory Lane */
-        .memory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            max-width: 1000px;
-            margin: 3rem auto;
-        }
-
-        .memory-card {
-            background: rgba(255, 20, 147, 0.05);
-            border: 1px solid rgba(255, 105, 180, 0.2);
-            padding: 2rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .memory-card::before {
-            content: '';
-            position: absolute;
             top: 0;
-            left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 105, 180, 0.1), transparent);
-            transition: left 0.6s ease;
+            background-color: rgba(0,0,0,0.8);
+            overflow-y: auto;
         }
-
-        .memory-card:hover::before {
-            left: 100%;
+        .modal-content {
+            background-color: #1f1f1f;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 900px;
+            position: relative;
         }
-
-        .memory-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-5px);
-        }
-
-        .memory-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--accent);
-        }
-
-        .memory-card p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: var(--accent-light);
-        }
-
-        /* Final Section */
-        .final {
-            background: radial-gradient(ellipse at center, rgba(255, 20, 147, 0.15) 0%, transparent 70%);
-        }
-
-        .message-reveal {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            text-align: center;
-            line-height: 1.4;
-            opacity: 0;
-            animation: fadeIn 2s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        /* Slider */
-        .slider-container {
-            width: 100%;
-            max-width: 500px;
-            margin: 3rem auto;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 105, 180, 0.2);
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--accent);
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
             cursor: pointer;
-            border-radius: 50%;
-            transition: transform 0.2s ease;
+            line-height: 1;
         }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.3);
+        .close:hover { color: #fff; }
+        .tutorial-title { color: #ffffff; font-size: 2rem; margin-bottom: 0.5rem; }
+        .difficulty {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: #3d3d3d;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
         }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: var(--accent);
-            cursor: pointer;
-            border-radius: 50%;
-            border: none;
+        .materials {
+            background: #2d2d2d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
         }
-
-        .slider-label {
+        .materials h3 { color: #ffffff; margin-bottom: 1rem; }
+        .materials ul { list-style-position: inside; color: #b0b0b0; }
+        .step {
+            background: #2d2d2d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #4a4a4a;
+        }
+        .step-number { color: #888; font-size: 0.9rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .step-title { color: #ffffff; font-size: 1.3rem; margin-bottom: 0.8rem; }
+        .step-description { color: #b0b0b0; line-height: 1.8; }
+        .step-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #3d3d3d, #4d4d4d);
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        .tips {
+            background: #2d2d2d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            border-left: 4px solid #555;
+        }
+        .tips h3 { color: #ffffff; margin-bottom: 1rem; }
+        .no-results {
             text-align: center;
-            margin-top: 1rem;
-            font-size: 1.5rem;
-            color: var(--accent-light);
+            padding: 3rem;
+            color: #888;
+            font-size: 1.2rem;
         }
-
         @media (max-width: 768px) {
-            section {
-                padding: 3rem 1.5rem;
-            }
-            
-            .memory-grid {
-                grid-template-columns: 1fr;
-            }
+            .crafts-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+            .modal-content { margin: 1rem; padding: 1.5rem; }
+            .tutorial-title { font-size: 1.5rem; }
+            .category-btn { font-size: 0.8rem; padding: 0.4rem 0.8rem; }
         }
+        @media (max-width: 480px) { .crafts-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <canvas id="particleCanvas"></canvas>
-
-    <!-- Hero -->
-    <section class="hero visible">
-        <h1>Emma</h1>
-        <p class="date">XIV-II-MMXXVI</p>
-        <div class="scroll-indicator">↓ scroll</div>
-    </section>
-
-    <!-- Section 1 -->
-    <section>
-        <div class="content-box">
-            <h2>A besonderer Tag</h2>
-            <p>Ned weils as Datum vorschreibt, sondern weil jeder Moment mid dir bsonders is mei Bebi.</p>
-        </div>
-    </section>
-
-    <!-- Section 2 - Interactive Counter -->
-    <section class="interactive-section">
-        <div class="content-box">
-            <h2>Mir samma zam seit</h2>
-            <div class="counter-display" id="dateReveal" onclick="revealDate()" style="font-size: clamp(2rem, 5vw, 3.5rem); cursor: pointer;">
-                ❤️
+    <header>
+        <div class="container">
+            <h1>🧵 Handwerk Lernen</h1>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Suche nach Handwerk... (z.B. Häkeln, Stricken, Nähen)">
             </div>
-            <div id="timeBreakdown" style="margin-top: 2rem; font-size: 1.3rem; line-height: 2; opacity: 0; transition: opacity 0.6s ease;"></div>
-        </div>
-    </section>
-
-    <!-- Section 3 -->
-    <section>
-        <div class="content-box">
-            <h2>Wos bedeutet des?</h2>
-            <p>Des bedeit, dass i da dankbar bin. Fia de gloana Sachan, de großen Erlebnisse, und ois dazwischen.</p>
-        </div>
-    </section>
-
-    <!-- Section 4 - Slider Interaction -->
-    <section class="interactive-section">
-        <div class="content-box">
-            <h2>Wie sehr?</h2>
-            <div class="slider-container">
-                <input type="range" min="0" max="100" value="100" id="loveSlider" oninput="updateLoveLevel(this.value)">
-                <div class="slider-label" id="sliderLabel">Unendlich</div>
+            <div class="category-nav">
+                <button class="category-btn active" data-category="all">Alle</button>
+                <button class="category-btn" data-category="textil">Textil</button>
+                <button class="category-btn" data-category="holz">Holz</button>
+                <button class="category-btn" data-category="papier">Papier</button>
+                <button class="category-btn" data-category="metall">Metall</button>
+                <button class="category-btn" data-category="keramik">Keramik & Ton</button>
+                <button class="category-btn" data-category="schmuck">Schmuck</button>
+                <button class="category-btn" data-category="deko">Deko</button>
+                <button class="category-btn" data-category="küche">Küche</button>
             </div>
         </div>
-    </section>
-
-    <!-- Section 5 - Memory Cards -->
-    <section>
-        <div class="content-box">
-            <h2>Erinnerungen</h2>
-            <div class="memory-grid">
-                <div class="memory-card" onclick="revealMemory(this)">
-                    <h3>Da erste Moment</h3>
-                    <p class="reveal-text">Wia i gwisst hab, dass du wos Bsonderes bist.</p>
-                </div>
-                <div class="memory-card" onclick="revealMemory(this)">
-                    <h3>De Lacher</h3>
-                    <p class="reveal-text">De bis ind Nacht dauern und mi ois vergessn lossn.</p>
-                </div>
-                <div class="memory-card" onclick="revealMemory(this)">
-                    <h3>De Stille</h3>
-                    <p class="reveal-text">In der ma uns ohne Worte verstengand.</p>
-                </div>
-                <div class="memory-card" onclick="revealMemory(this)">
-                    <h3>De Zukunft</h3>
-                    <p class="reveal-text">De ma zammad schreim wern.</p>
-                </div>
-            </div>
+    </header>
+    <div class="container">
+        <div class="crafts-grid" id="craftsGrid"></div>
+    </div>
+    <div id="tutorialModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="tutorialContent"></div>
         </div>
-    </section>
-
-    <!-- Section 6 - Reveal Message -->
-    <section>
-        <div class="content-box">
-            <button class="subtle-button" onclick="revealMessage()">A Nachricht fia di</button>
-            <p class="reveal-text" id="secretMessage" style="margin-top: 3rem;"></p>
-        </div>
-    </section>
-
-    <!-- Final Section -->
-    <section class="final">
-        <div class="message-reveal">
-            I lieb di mei Zwerg
-        </div>
-    </section>
-
+    </div>
     <script>
-        // Particle Canvas Background
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const particles = [];
-        const particleCount = 50;
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = Math.random() * 0.5 - 0.25;
-                this.speedY = Math.random() * 0.5 - 0.25;
-                this.opacity = Math.random() * 0.5 + 0.2;
-            }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                if (this.x > canvas.width) this.x = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.y < 0) this.y = canvas.height;
-            }
-
-            draw() {
-                ctx.fillStyle = `rgba(255, 105, 180, ${this.opacity})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+const crafts = [
+  {name:"Häkeln Grundlagen",category:"textil",icon:"🧶",difficulty:"Anfänger",description:"Lerne die Grundtechniken des Häkelns",materials:["Häkelnadel 3-4mm","Wolle 100g","Schere","Wollnadel"],steps:[{title:"Anfangsschlinge",description:"Forme eine Schlaufe, führe das Ende durch und ziehe an. Schiebe die Nadel durch.",icon:"🔗"},{title:"Luftmaschen",description:"Lege Faden über Nadel, hole durch die Schlinge. Wiederhole für gewünschte Anzahl.",icon:"⛓️"},{title:"Feste Maschen",description:"Stich in 2. Luftmasche ein, hole Faden, ziehe durch. 2 Schlingen auf Nadel. Hole Faden, ziehe durch beide.",icon:"🔄"},{title:"Reihen häkeln",description:"Am Ende Wendeluftmasche, arbeite zurück. Wiederhole bis zur Größe.",icon:"↔️"}],tips:["Halte Spannung gleichmäßig","Zähle Maschen regelmäßig","Verwende helle Wolle"]},
+  {name:"Stricken für Anfänger",category:"textil",icon:"🧵",difficulty:"Anfänger",description:"Die ersten Schritte beim Stricken",materials:["2 Stricknadeln 4-5mm","Strickwolle","Schere","Maßband"],steps:[{title:"Maschen anschlagen",description:"Schlinge auf Nadel. Steche durch, hole Faden, neue Masche auf linke Nadel. Wiederhole.",icon:"🎯"},{title:"Rechte Maschen",description:"Von links nach rechts in Masche, Faden hinten, durchholen, alte Masche fallen lassen.",icon:"➡️"},{title:"Linke Maschen",description:"Faden vorn. Von rechts nach links, Faden durchholen, alte Masche fallen lassen.",icon:"⬅️"},{title:"Abketten",description:"Stricke 2 Maschen, ziehe erste über zweite. Wiederhole bis zum Ende.",icon:"🔒"}],tips:["Nadeln locker halten","Übe mit mittlerer Wolle","Zähle nach jeder Reihe"]},
+  {name:"Nähen mit Nähmaschine",category:"textil",icon:"🪡",difficulty:"Anfänger",description:"Grundlegende Nähmaschinen-Techniken",materials:["Nähmaschine","Garn","Stoff","Stecknadeln","Schere"],steps:[{title:"Einfädeln",description:"Folge dem Einfädelpfad. Durch Fadenführung, Spannungsscheiben, Fadenhebel, Nadel. Spule einlegen, Unterfaden hochholen.",icon:"🎯"},{title:"Versäubern",description:"Zickzackstich einstellen. Stoffkante gleichmäßig durchführen.",icon:"〰️"},{title:"Gerade Naht",description:"Stoff rechts auf rechts stecken. Gerade nähen mit 1cm Nahtzugabe. Verriegeln.",icon:"➖"},{title:"Bügeln",description:"Nahtzugaben auseinander oder zur Seite bügeln.",icon:"🔥"}],tips:["Teste auf Stoffrest","Richtige Nadel verwenden","Maschine sauber halten"]},
+  {name:"Handnähen Stiche",category:"textil",icon:"🪢",difficulty:"Anfänger",description:"Wichtige Handnähstiche",materials:["Nähnadeln","Nähgarn","Schere","Fingerhut"],steps:[{title:"Heftstich",description:"Gleichmäßig auf und ab durch Stoff stechen.",icon:"---"},{title:"Rückstich",description:"Vorwärts stechen, hinter letztem Stich hochkommen, zurück ins Ende stechen.",icon:"→←→"},{title:"Blindstich",description:"Abwechselnd minimal in Hauptstoff und mehr in Saumkante stechen.",icon:"⋮⋮⋮"},{title:"Knopf annähen",description:"Mehrmals durch Knopflöcher nähen. Unter Knopf um Fäden wickeln für Stiel.",icon:"🔘"}],tips:["Fingerhut verwenden","Faden max 50cm","Feste Knoten"]},
+  {name:"Sticken Kreuzstich",category:"textil",icon:"✖️",difficulty:"Anfänger",description:"Dekorative Kreuzstich-Stickerei",materials:["Stickgarn","Sticknadel","Aida-Stoff","Stickrahmen","Vorlage"],steps:[{title:"Einspannen",description:"Stoff zwischen Ringe spannen. Schraube festziehen. Straff, nicht verzogen.",icon:"⭕"},{title:"Faden vorbereiten",description:"50cm Garn, 2-3 Fäden herausziehen. Nadel fädeln ohne Knoten.",icon:"🧵"},{title:"Diagonalstich",description:"Unten links beginnen, diagonal nach oben rechts. Anfang auf Rückseite sichern.",icon:"/"},{title:"Kreuz vollenden",description:"Zurück von unten rechts nach oben links. Alle Kreuze gleiche Richtung.",icon:"X"}],tips:["Alle Kreuze gleiche Richtung","Nicht zu fest ziehen","In Reihen arbeiten"]},
+  {name:"Makramee Grundknoten",category:"textil",icon:"🪢",difficulty:"Anfänger",description:"Moderne Makramee-Technik",materials:["Makramee-Garn 3-5mm","Schere","Holzstab","Klebeband"],steps:[{title:"Anschlagknoten",description:"Garn falten. Schlaufe über Stab, Enden durch Schlaufe, festziehen.",icon:"🔗"},{title:"Halber Knoten",description:"Bei 4 Fäden: Faden 1 über 2&3, Faden 4 über 1, unter 2&3 durch Schlaufe.",icon:"〰️"},{title:"Kreuzknoten",description:"Halber Knoten, dann halber Knoten entgegengesetzt. Ergibt flachen Knoten.",icon:"⚔️"},{title:"Spiralknoten",description:"Nur halbe Knoten in gleiche Richtung wiederholen. Bildet Spirale.",icon:"🌀"}],tips:["3-4x Projektlänge Garn","Trägerfäden straff","Knoten einzeln üben"]},
+  {name:"Patchwork Quilten",category:"textil",icon:"🧩",difficulty:"Mittelschwer",description:"Farbenfrohe Patchwork-Decken",materials:["Baumwollstoffe","Vlies","Rückseitenstoff","Rollschneider","Nähmaschine"],steps:[{title:"Zuschneiden",description:"4-8 Stoffe wählen. Quadrate gleicher Größe schneiden (15x15cm).",icon:"✂️"},{title:"Zusammennähen",description:"Quadrate zu Reihen nähen, 0,75cm Nahtzugabe. Nähte zur dunklen Seite bügeln.",icon:"➕"},{title:"Sandwich",description:"Rückseite, Vlies, Patchwork übereinander legen. Alle Lagen heften.",icon:"🥪"},{title:"Quilten",description:"Durch alle Schichten nähen entlang Nähte oder Muster.",icon:"〰️"}],tips:["Stoffe vorwaschen","Walking Foot verwenden","Muster vorher planen"]},
+  {name:"Sockenstricken",category:"textil",icon:"🧦",difficulty:"Fortgeschritten",description:"Kuschelige Socken stricken",materials:["Sockenwolle 100g","Nadelspiel 2,5mm","Wollnadel","Schere"],steps:[{title:"Bündchen",description:"64 Maschen anschlagen, auf 4 Nadeln verteilen. Bündchen 2re/2li für 5cm.",icon:"⭕"},{title:"Schaft",description:"Glatt rechts 10-12cm stricken.",icon:"📏"},{title:"Ferse",description:"Über Hälfte der Maschen (32) hin und zurück. Fersenwand und Käppchen.",icon:"↩️"},{title:"Fuß und Spitze",description:"Maschen aufnehmen, Fuß in Runden. Bei Spitze abnehmen bis 8 Maschen. Durchziehen.",icon:"🔻"}],tips:["Fuß messen","Verstärktes Garn für Ferse","Rundenanfang markieren"]},
+  {name:"Filzen Nassfilzen",category:"textil",icon:"🐑",difficulty:"Anfänger",description:"Aus Wolle gefilzte Objekte",materials:["Filzwolle","Warmes Wasser","Seife","Bambusmatte","Handtuch"],steps:[{title:"Wolle auslegen",description:"Dünne Schichten überlappend auf Matte. Mind. 3 Schichten kreuzweise.",icon:"📐"},{title:"Anfeuchten",description:"Mit warmem Seifenwasser besprühen. Mit Folie bedecken, vorsichtig drücken.",icon:"💧"},{title:"Reiben",description:"Sanft in Kreisen über Folie reiben. Langsam Druck steigern.",icon:"🔄"},{title:"Walken",description:"In Matte einrollen, 50-100x rollen. Drehen, wiederholen. Kalt ausspülen.",icon:"🌊"}],tips:["Wasserfeste Unterlage","Schrumpft 30-40%","Farben mischen möglich"]},
+  {name:"Applikationen nähen",category:"textil",icon:"🎨",difficulty:"Mittelschwer",description:"Stoffapplikationen gestalten",materials:["Hauptstoff","Applikationsstoff","Vliesofix","Nähmaschine","Bügeleisen"],steps:[{title:"Motiv vorbereiten",description:"Motiv spiegelverkehrt auf Vliesofix zeichnen. Grob ausschneiden.",icon:"✏️"},{title:"Aufbügeln",description:"Vliesofix auf linke Seite des Applikationsstoffs bügeln. Exakt ausschneiden.",icon:"🔥"},{title:"Positionieren",description:"Papier abziehen. Auf Hauptstoff positionieren und festbügeln.",icon:"📍"},{title:"Festnähen",description:"Mit engem Zickzack (Satinstich) um Kanten nähen.",icon:"〰️"}],tips:["Stickgarn verwenden","Temperatur testen","Vlies auf Rückseite"]},
+  {name:"Holzbearbeitung Grundlagen",category:"holz",icon:"🪵",difficulty:"Anfänger",description:"Erste Schritte Holzverarbeitung",materials:["Holzbretter","Säge","Schleifpapier","Lineal","Schraubzwingen"],steps:[{title:"Holz wählen",description:"Weichholz gut für Anfänger. Auf Risse prüfen.",icon:"🌲"},{title:"Anzeichnen",description:"Schnittlinien mit Bleistift markieren. Winkelmaß für 90°.",icon:"📏"},{title:"Sägen",description:"Holz mit Zwingen fixieren. Entlang Linie sägen, gleichmäßig.",icon:"🪚"},{title:"Schleifen",description:"Kanten mit Körnung 120, dann 240 schleifen. Mit Maserung.",icon:"✨"}],tips:["Schutzbrille tragen","Gut belüftet arbeiten","Zweimal messen"]},
+  {name:"Vogelhäuschen bauen",category:"holz",icon:"🏠",difficulty:"Mittelschwer",description:"Einfaches Vogelhäuschen konstruieren",materials:["Holzbretter 20mm","Holzleim","Schrauben","Säge","Lasur"],steps:[{title:"Zuschneiden",description:"Boden 15x15cm, Seiten 15x20cm, 12x20cm, Dach 2x15x18cm. Eingangsloch 3cm bohren.",icon:"✂️"},{title:"Zusammenbauen",description:"Seitenwände mit Boden verleimen. Vorder-/Rückwand befestigen. Trocknen.",icon:"🔨"},{title:"Dach anbringen",description:"Dachteile im Winkel anschrauben. Eine Seite abnehmbar für Reinigung.",icon:"🛠️"},{title:"Wetterschutz",description:"Glatt schleifen. 2-3 Schichten Lasur. Drainagelöcher in Boden bohren.",icon:"🎨"}],tips:["Unbehandeltes Holz","2-3m hoch platzieren","Jährlich reinigen"]},
+  {name:"Holzschnitzen",category:"holz",icon:"🔪",difficulty:"Mittelschwer",description:"Mit Schnitzmesser Figuren gestalten",materials:["Schnitzmesser-Set","Lindenholz","Handschuhe","Schleifpapier"],steps:[{title:"Skizzieren",description:"Motiv auf Holz zeichnen. Mit einfachen Formen beginnen.",icon:"✏️"},{title:"Grobform",description:"Grobe Form ausschneiden. Vom Körper weg schneiden. Größeres Messer.",icon:"🪚"},{title:"Details",description:"Kleinere Messer für Details. Kleine kontrollierte Schnitte. Werkstück drehen.",icon:"🎨"},{title:"Finish",description:"Vorsichtig mit feinem Papier schleifen. Optional mit Leinöl behandeln.",icon:"✨"}],tips:["Messer scharf halten","Schutzhandschuhe tragen","Lindenholz für Anfänger"]},
+  {name:"Schneidebretter",category:"holz",icon:"🍴",difficulty:"Anfänger",description:"Praktische Schneidebretter aus Holz",materials:["Hartholz (Buche/Ahorn)","Holzleim","Schleifmaschine","Mineralöl"],steps:[{title:"Holzauswahl",description:"Hartholz ohne Risse. Streifen 4-5cm breit, 30cm lang schneiden.",icon:"🌳"},{title:"Verleimen",description:"Leim auf Längskanten. Streifen zusammenfügen, mit Zwingen pressen. 24h trocknen.",icon:"〰️"},{title:"Schleifen",description:"Hobeln. Mit 120, 180, 240 schleifen bis glatt.",icon:"✨"},{title:"Ölen",description:"Mineralöl großzügig auftragen, einziehen lassen, abwischen. Mehrmals wiederholen.",icon:"💧"}],tips:["Nur lebensmittelechte Materialien","Regelmäßig ölen","Handwäsche"]},
+  {name:"Möbel restaurieren",category:"holz",icon:"🪑",difficulty:"Fortgeschritten",description:"Alte Möbel erneuern",materials:["Schleifpapier","Abbeizer","Holzspachtel","Lasur/Lack","Pinsel"],steps:[{title:"Farbe entfernen",description:"Abbeizer auftragen, einwirken lassen. Weiche Farbe mit Spachtel entfernen. Gut belüften.",icon:"🧹"},{title:"Reparieren",description:"Risse mit Holzspachtel füllen. Trocknen, bündig schleifen.",icon:"🔧"},{title:"Schleifen",description:"Komplett mit 120, dann 240 schleifen. Staub gründlich entfernen.",icon:"✨"},{title:"Streichen",description:"2-3 dünne Schichten Lasur/Lack. Zwischen Schichten anschleifen, entstauben.",icon:"🎨"}],tips:["Staubfrei arbeiten","Schutzkleidung beim Abbeizen","Geduld beim Trocknen"]},
+  {name:"Holzdrechseln Basics",category:"holz",icon:"⚙️",difficulty:"Fortgeschritten",description:"Grundlagen des Drechselns",materials:["Drechselbank","Drechseleisen","Holzrohlinge","Schutzbrille"],steps:[{title:"Rohling vorbereiten",description:"Mitte markieren. Zwischen Spindelstock und Reitstock befestigen. Zentrieren.",icon:"🎯"},{title:"Grobbearbeitung",description:"Schruppröhre für grobe Form. Von Mitte zu Enden. Werkzeug stabil auf Auflage.",icon:"🔨"},{title:"Feinbearbeitung",description:"Formröhren für Details. Langsam und gleichmäßig. Mit Schablone prüfen.",icon:"✂️"},{title:"Schleifen",description:"Bei laufender Maschine mit Papier grob zu fein schleifen. Optional Öl/Wachs.",icon:"💫"}],tips:["Mit weichem Holz starten","Werkzeuge scharf halten","Schutzbrille, keine losen Teile"]},
+  {name:"Origami Kranich",category:"papier",icon:"🦢",difficulty:"Mittelschwer",description:"Klassischen Origami-Kranich falten",materials:["Origami-Papier 15x15cm","Falzbein optional"],steps:[{title:"Vorfalten",description:"Diagonal falten, öffnen. Andere Diagonale. Horizontal und vertikal. X und + Faltlinien.",icon:"✖️"},{title:"Basis",description:"Vier Ecken in Mitte zusammenbringen zu kleiner Basis. Glätten.",icon:"◇"},{title:"Kranichform",description:"Obere Dreiecke nach innen. Ecken auseinanderziehen für Kopf und Schwanz. Spitze für Schnabel.",icon:"🦢"},{title:"Flügel",description:"Seitenklappen nach außen für Flügel. Vorsichtig auseinanderziehen.",icon:"🕊️"}],tips:["Dünnes Origami-Papier","Präzise Kanten","Mit größerem Papier üben"]},
+  {name:"Scrapbooking",category:"papier",icon:"📖",difficulty:"Anfänger",description:"Kreative Fotoalben gestalten",materials:["Scrapbook-Album","Bastelpapier","Fotos","Kleber","Sticker"],steps:[{title:"Layout planen",description:"Fotos und Deko ohne Kleber auslegen. Verschiedene Anordnungen testen.",icon:"🎨"},{title:"Hintergrund",description:"Hintergrundpapier aufkleben. Kontrastierende Farben zu Fotos.",icon:"🖼️"},{title:"Fotos anbringen",description:"Fotos auf Cardstock-Matten kleben für Dimension. Auf Seite befestigen.",icon:"📷"},{title:"Verzieren",description:"Titel, Journaling, Sticker hinzufügen. Geschichte hinter Fotos erzählen.",icon:"✨"}],tips:["Säurefreie Materialien","Weniger ist mehr","Seiten datieren"]},
+  {name:"Papierschöpfen",category:"papier",icon:"📄",difficulty:"Mittelschwer",description:"Handgeschöpftes Papier herstellen",materials:["Altpapier","Mixer","Schöpfrahmen","Wanne","Schwämme","Filztücher"],steps:[{title:"Pulpe",description:"Papier zerreißen, 24h in Wasser einweichen. Mit Wasser mixen zu Brei.",icon:"💧"},{title:"Schöpfen",description:"Wanne mit Wasser und Pulpe füllen. Rahmen gerade eintauchen und gleichmäßig hochziehen.",icon:"🌊"},{title:"Wasser entfernen",description:"Abtropfen. Mit Schwamm Wasser rausdrücken. Rahmen auf Filztuch drehen, klopfen.",icon:"💦"},{title:"Trocknen",description:"Filztuch drüber. Mit Nudelholz rollen. An Luft oder zwischen Zeitung trocknen.",icon:"☀️"}],tips:["Verschiedene Papiere","Blüten/Fasern für Effekte","Dicke von Pulpenkonzentration"]},
+  {name:"Pop-Up Karten",category:"papier",icon:"🎁",difficulty:"Mittelschwer",description:"3D-Effekte in Grußkarten",materials:["Fester Karton","Bastelpapier","Lineal","Cutter","Kleber"],steps:[{title:"Basis",description:"Karton halbieren. Auf Falz 2 parallele Schnitte markieren (3cm lang, 2cm auseinander).",icon:"📏"},{title:"Pop-Up schneiden",description:"Markierte Linien schneiden. Streifen nach innen, dann außen falten. Öffnen - steht hervor.",icon:"✂️"},{title:"Element gestalten",description:"Motiv ausschneiden und auf Pop-Up-Streifen kleben. Beim Schließen darf es nicht rausragen.",icon:"🎨"},{title:"Außenseite",description:"Pop-Up-Karte auf zweite Karte kleben, Schnitte verbergen. Außenseite dekorieren.",icon:"✨"}],tips:["Mechanismus vor Deko testen","Fester Karton","Pop-Up-Größe passend planen"]},
+  {name:"Quilling",category:"papier",icon:"🌀",difficulty:"Anfänger",description:"Filigraner Papierschmuck",materials:["Quilling-Papierstreifen","Quilling-Nadel","Kleber","Pinzette"],steps:[{title:"Grundrolle",description:"Streifenende in Nadel befestigen. Fest aufrollen. Etwas entspannen lassen.",icon:"⭕"},{title:"Fixieren",description:"Kleber-Tropfen auf Streifenende. An Rolle drücken. Nadel rausziehen.",icon:"💧"},{title:"Formen",description:"Rolle an einer Seite zusammenkneifen für Tropfen. Zwei Seiten für Blatt. Experimentieren.",icon:"🍃"},{title:"Zusammensetzen",description:"Mehrere Formen zu Muster zusammenkleben. Blumen, Schmetterlinge, abstrakt.",icon:"🌸"}],tips:["Gleichmäßige Spannung","Zahnstocher zum Kleben","Grundformen üben"]},
+  {name:"Buchbindung Japanisch",category:"papier",icon:"📚",difficulty:"Mittelschwer",description:"Handgebundene Notizbücher",materials:["Papierbögen","Karton für Einband","Nadel","Buchbindergarn","Ahle"],steps:[{title:"Seiten",description:"Papier halbieren. Auf Größe schneiden. Ineinander stapeln.",icon:"📄"},{title:"Einband",description:"Zwei Kartondeckel etwas größer schneiden. Optional mit Stoff/Papier beziehen.",icon:"📘"},{title:"Löcher",description:"4 Löcher entlang Falz in gleichmäßigen Abständen markieren. Mit Ahle durch alle Lagen stechen.",icon:"🔴"},{title:"Japanische Bindung",description:"Garn durch Löcher in speziellem Muster fädeln. Außen beginnen, über Rücken, durch nächstes Loch. Fest verknoten.",icon:"🧵"}],tips:["Starkes Garn/gewachstes Leinen","Gleichmäßige Loch-Abstände","Fest, aber nicht zu fest ziehen"]},
+  {name:"Papierblumen",category:"papier",icon:"🌺",difficulty:"Anfänger",description:"Realistische Blumen aus Krepppapier",materials:["Krepppapier","Blumendraht","Floristenband","Schere","Kleber"],steps:[{title:"Blütenblätter",description:"Blütenblattformen aus Krepppapier schneiden. Für Rose ca. 15-20 Blätter verschiedener Größen.",icon:"✂️"},{title:"Form geben",description:"Mitte jedes Blattes vorsichtig dehnen für Wölbung. Spitzen leicht eindrehen.",icon:"🌀"},{title:"Blüte aufbauen",description:"Kleinste Blätter um Drahtende wickeln. Größere Blätter überlappend hinzufügen. Mit Floristenband befestigen.",icon:"🌹"},{title:"Stiel",description:"Draht mit grünem Band umwickeln. Grüne Blätter hinzufügen.",icon:"🌿"}],tips:["Krepppapier dehnt sich","Farbtöne mischen","Verschiedene Blumen probieren"]},
+  {name:"Löten lernen",category:"metall",icon:"🔥",difficulty:"Anfänger",description:"Grundlegende Löttechniken",materials:["Lötkolben 30-60W","Lötzinn","Lötkolbenständer","Schwamm","Schutzbrille"],steps:[{title:"Vorbereiten",description:"Lötkolben auf 350°C vorheizen. Spitze am Schwamm reinigen und verzinnen.",icon:"🔌"},{title:"Fixieren",description:"Zu lötende Teile fest zusammenhalten. Bei Elektronik: Bauteil durchstecken, Beine umbiegen.",icon:"📌"},{title:"Löten",description:"Beide Teile mit Kolbenspitze 1-2 Sek berühren. Lötzinn an Lötstelle (nicht Kolben) führen. Sollte schmelzen und fließen.",icon:"💧"},{title:"Abkühlen",description:"Kolben und Zinn entfernen. 2-3 Sek nicht bewegen. Gute Lötstelle: glänzend, kegelförmig.",icon:"❄️"}],tips:["Belüfteter Raum","Nie heiße Spitze berühren","Auf Schrottplatinen üben"]},
+  {name:"Schmieden Grundlagen",category:"metall",icon:"⚒️",difficulty:"Fortgeschritten",description:"Erste Schritte Schmieden",materials:["Amboss","Schmiedehammer","Esse/Schmiede","Zange","Stahlstab","Schutzausrüstung"],steps:[{title:"Erhitzen",description:"Stahlstab in Esse bis kirschrot (800-900°C) erhitzen. Wird formbar.",icon:"🔥"},{title:"Auf Amboss",description:"Glühendes Metall mit Zange auf Amboss legen. Schnell arbeiten - kühlt ab.",icon:"🔨"},{title:"Hämmern",description:"Kontrolliert hämmern. Werkstück regelmäßig drehen. Von Zentrum zu Enden.",icon:"💥"},{title:"Wiederholen",description:"Bei Dunkelwerden erneut erhitzen. Erhitzen und Hämmern wiederholen bis zur Form.",icon:"🔄"}],tips:["Schutzbrille, feste Schuhe","Nie mit kaltem Metall","Unter Anleitung lernen"]},
+  {name:"Drahtschmuck",category:"metall",icon:"💎",difficulty:"Anfänger",description:"Schmuck aus Draht gestalten",materials:["Basteldraht 0,6-1mm","Rundzange","Flachzange","Seitenschneider","Perlen"],steps:[{title:"Grundform",description:"20-30cm Draht abschneiden. Mit Rundzange Öse am Ende formen. Basis des Schmucks.",icon:"⭕"},{title:"Perlen",description:"Perlen auf Draht fädeln. Platz zwischen Perlen für Wicklungen lassen.",icon:"📿"},{title:"Wickeln",description:"Dünnen Draht um Hauptdraht zwischen Perlen wickeln. Fixiert und gibt Struktur.",icon:"🌀"},{title:"Verschluss",description:"Am anderen Ende Haken oder Öse als Verschluss formen. Überschuss abschneiden, Enden glatt drücken.",icon:"🔗"}],tips:["Weichen Draht verwenden","Wicklungen eng","Scharfe Enden glätten"]},
+  {name:"Metallprägung",category:"metall",icon:"🖼️",difficulty:"Mittelschwer",description:"Muster in Metallfolie prägen",materials:["Prägefolie Alu/Kupfer","Prägewerkzeuge","Vorlage","Moosgummi-Unterlage","Klebeband"],steps:[{title:"Vorlage",description:"Motiv zeichnen oder drucken. Mit Klebeband auf Folie befestigen.",icon:"✏️"},{title:"Kontur",description:"Folie auf weiche Unterlage. Mit Prägewerkzeug Motivlinien nachfahren. Gleichmäßig drücken.",icon:"✍️"},{title:"Details",description:"Vorlage entfernen. Von Rückseite prägen für erhabene Bereiche.",icon:"🎨"},{title:"Finish",description:"Hintergrundbereiche glätten. Optional: Patinieren oder erhabene Stellen polieren.",icon:"✨"}],tips:["Nicht zu dünne Folie","Langsam für gleichmäßige Ergebnisse","Verschiedene Werkzeuge probieren"]},
+  {name:"Blechdosen Upcycling",category:"metall",icon:"🥫",difficulty:"Anfänger",description:"Kreative Nutzung alter Dosen",materials:["Saubere Blechdosen","Acrylfarbe","Pinsel","Bohrer","Schleifpapier"],steps:[{title:"Vorbereiten",description:"Etiketten entfernen. Waschen, trocknen. Scharfe Kanten am Rand schleifen.",icon:"🧼"},{title:"Löcher (optional)",description:"Für Laternen/Blumentöpfe: Muster markieren und Löcher bohren oder hämmern.",icon:"🔨"},{title:"Bemalen",description:"Mit weißer Acrylfarbe grundieren. Trocknen. In Wunschfarbe oder mit Mustern bemalen.",icon:"🎨"},{title:"Verwenden",description:"Als Stiftehalter, Blumentopf, Laterne (Teelicht) oder Aufbewahrung nutzen.",icon:"✨"}],tips:["Mit Wasser füllen und einfrieren vor Bohren","Metallfarbe besser","Klarlack für Außen"]},
+  {name:"Töpfern auf Scheibe",category:"keramik",icon:"🏺",difficulty:"Fortgeschritten",description:"Gefäße auf Töpferscheibe drehen",materials:["Töpferscheibe","Ton 2-3kg","Schwamm","Schneidedraht","Wasser"],steps:[{title:"Zentrieren",description:"Tonklumpen in Scheibenmitte. Hände befeuchten. Bei mittlerer Geschwindigkeit mit beiden Händen nach unten/Mitte drücken.",icon:"🎯"},{title:"Öffnen",description:"Mit Daumen/Fingern langsam in zentrierten Ton drücken. Ca. 1cm Boden stehen lassen.",icon:"⭕"},{title:"Hochziehen",description:"Hand innen, Hand außen an Wand. Sanft nach oben ziehen mit leichtem Druck. Mehrmals wiederholen.",icon:"⬆️"},{title:"Formen",description:"Zur gewünschten Gefäßform formen. Mit feuchtem Schwamm glätten. Mit Draht vom Kopf abschneiden.",icon:"✨"}],tips:["Ton und Hände feucht halten","Langsam arbeiten","Erst Zylinder üben"]},
+  {name:"Handaufbau Ton",category:"keramik",icon:"✋",difficulty:"Anfänger",description:"Töpfern ohne Scheibe",materials:["Ton","Nudelholz","Messer","Schwamm","Modellierwerkzeuge"],steps:[{title:"Bodenplatte",description:"Ton 0,5cm dick ausrollen. Runde oder eckige Form für Boden ausschneiden.",icon:"⭕"},{title:"Würste",description:"Ton zu gleichmäßigen Würsten (1cm Durchmesser) rollen. Spiralförmig auf Boden legen.",icon:"🌀"},{title:"Verbinden",description:"Innenseite mit Daumen/Werkzeug verstreichen, Würste verbinden. Außen für einheitliche Oberfläche glätten.",icon:"〰️"},{title:"Trocknen",description:"Langsam trocknen lassen (locker mit Plastik bedecken). Zu schnell verursacht Risse.",icon:"☀️"}],tips:["Ton gleichmäßig feucht","Nicht-haftende Unterlage","Neue Würste gut verbinden"]},
+  {name:"Ton glasieren",category:"keramik",icon:"🎨",difficulty:"Mittelschwer",description:"Keramik mit Glasur veredeln",materials:["Gebrannte Keramik","Glasuren","Pinsel","Schwamm","Wachsresist"],steps:[{title:"Vorbereiten",description:"Gebrannte Keramik von Staub säubern. Wachsresist auf Boden auftragen - verhindert Kleben.",icon:"🧹"},{title:"Erste Schicht",description:"In Glasur tauchen oder mit Pinsel auftragen. Gleichmäßige, nicht zu dicke Schicht.",icon:"🖌️"},{title:"Weitere Schichten",description:"Trocknen lassen. 2-3 dünne Schichten für volle Deckkraft. Verschiedene Glasuren kombinierbar.",icon:"🎨"},{title:"Glattbrand",description:"Bei empfohlener Temperatur brennen (1000-1280°C). Glasur schmilzt, wird glänzend.",icon:"🔥"}],tips:["Glasuren auf Probefliesen testen","Nicht zu dick glasieren","Boden glasurfrei halten"]},
+  {name:"Reliefplatten",category:"keramik",icon:"🖼️",difficulty:"Mittelschwer",description:"Dekorative Tonplatten mit Relief",materials:["Ton","Nudelholz","Modellierwerkzeuge","Stempel","Messer","Schnur"],steps:[{title:"Ausrollen",description:"Ton gleichmäßig zu Platte (1cm dick) rollen. Holzleisten als Abstandshalter für gleichmäßige Dicke.",icon:"📏"},{title:"Design",description:"Stempel oder Werkzeuge in Ton drücken für Muster. Oder Design mit Werkzeugen schnitzen.",icon:"🎨"},{title:"Ausschneiden",description:"Platte in gewünschte Form (rechteckig, rund etc.) schneiden. Kanten mit feuchtem Schwamm glätten.",icon:"✂️"},{title:"Aufhängung",description:"Mit Strohhalm zwei Löcher oben für Aufhängung bohren. Langsam und gleichmäßig trocknen.",icon:"🔗"}],tips:["Ton auf Stoff legen","Verschiedene Texturen","Schrumpfung einplanen 10-15%"]},
+  {name:"Perlenketten",category:"schmuck",icon:"📿",difficulty:"Anfänger",description:"Schöne Ketten aus Perlen",materials:["Perlen","Schmuckdraht/faden","Verschluss","Quetschperlen","Flachzange"],steps:[{title:"Länge",description:"Gewünschte Kettenlänge plus 10cm für Verschluss messen. Faden/Draht zuschneiden.",icon:"📏"},{title:"Verschluss befestigen",description:"Quetschperle, dann Verschlusshälfte auffädeln. Faden zurück durch Quetschperle. Mit Zange festdrücken.",icon:"🔗"},{title:"Perlen",description:"Perlen in gewünschter Reihenfolge auffädeln. Kurzes Fadenende in ersten Perlen verbergen.",icon:"📿"},{title:"Abschließen",description:"Quetschperle und zweite Verschlusshälfte auffädeln. Faden zurück durch Perlen. Festquetschen. Überschuss abschneiden.",icon:"✂️"}],tips:["Schmuckdraht für schwere Perlen","Design vorher planen","Zwischen wertvollen Perlen knoten"]},
+  {name:"Armbänder knüpfen",category:"schmuck",icon:"🎀",difficulty:"Anfänger",description:"Freundschaftsbänder und Makramee",materials:["Stickgarn/Makramee-Garn","Schere","Klebeband","Maßband"],steps:[{title:"Fäden",description:"3-6 Fäden je 80cm schneiden. Oben zusammenknoten. Knoten mit Klebeband befestigen.",icon:"🎯"},{title:"Grundknoten",description:"Linken Faden nehmen, 4-Form über nächsten Faden, durchziehen und festziehen. Mit jedem Faden nach rechts wiederholen.",icon:"4️⃣"},{title:"Muster",description:"Knotenreihen wiederholen. Für Chevron von außen nach innen. Für Streifen gleichen Faden.",icon:"〰️"},{title:"Abschließen",description:"Bis zur Länge knüpfen. Festen Knoten am Ende. Enden flechten für Verschluss oder zusammenbinden.",icon:"🔗"}],tips:["Spannung gleichmäßig","Verschiedene Farben für Muster","Grundknoten einzeln üben"]},
+  {name:"Ohrringe mit Perlen",category:"schmuck",icon:"💍",difficulty:"Anfänger",description:"Selbstgemachte Perlenohrringe",materials:["Ohrhaken","Nietstifte","Perlen","Rundzange","Seitenschneider"],steps:[{title:"Auffädeln",description:"Eine oder mehrere Perlen auf Nietstift stecken. Ca. 1cm Draht über letzter Perle lassen.",icon:"📿"},{title:"Öse",description:"Überstehenden Draht im 90° abbiegen. Ende mit Rundzange greifen und zu Öse drehen.",icon:"⭕"},{title:"Befestigen",description:"Öse leicht seitlich öffnen (nie aufziehen). In Ohrhaken einhängen. Öse wieder schließen.",icon:"🔗"},{title:"Zweiter Ohrring",description:"Vorgang für zweiten Ohrring wiederholen. Auf Identität achten.",icon:"👯"}],tips:["Hypoallergene Ohrhaken","Ösen seitlich öffnen","Beide Ohrringe abmessen"]},
+  {name:"Harzschmuck",category:"schmuck",icon:"💎",difficulty:"Mittelschwer",description:"Schmuckstücke aus Epoxidharz",materials:["Epoxidharz 2-Komponenten","Silikonformen","Pigmente/Glitzer","Einschlüsse","Handschuhe"],steps:[{title:"Anmischen",description:"Harz und Härter nach Anleitung mischen (meist 1:1). 3-5 Min langsam rühren, Luftblasen vermeiden.",icon:"🥤"},{title:"Farbe",description:"Pigmente, Glitzer hinzufügen. Vorsichtig rühren. Getrocknete Blüten oder Einschlüsse in Form platzieren.",icon:"🎨"},{title:"Gießen",description:"Harz langsam in Form gießen. Eventuell in Schichten für Effekte. Luftblasen mit Föhn/Zahnstocher entfernen.",icon:"💧"},{title:"Aushärten",description:"24-48h aushärten. Vorsichtig aus Form nehmen. Löcher für Aufhängungen bohren. Mit feinem Papier polieren.",icon:"✨"}],tips:["Staubfrei, warm arbeiten","Handschuhe tragen","UV-Harz für schneller"]},
+  {name:"Makramee Wandbehang",category:"deko",icon:"🧵",difficulty:"Mittelschwer",description:"Moderner Wandschmuck",materials:["Makramee-Garn 3mm","Holzstab/Ast","Schere","Maßband","Kamm"],steps:[{title:"Fäden",description:"20-30 Fäden je 2-3m schneiden. Mit Anschlagknoten am Stab befestigen. Doppelt so viele arbeitende Fäden.",icon:"🪢"},{title:"Grundmuster",description:"Reihen von Kreuzknoten arbeiten. Für Fischgrät: Hälfte von zwei benachbarten Gruppen für neue Knoten nutzen.",icon:"〰️"},{title:"Variieren",description:"Spiralknoten, offene Bereiche oder verschiedene Dichten für Textur integrieren.",icon:"🎨"},{title:"Fransen",description:"Enden als Fransen hängen lassen. Mit Kamm auffächern. Gerade oder schräg schneiden.",icon:"✂️"}],tips:["Mit einfachem Muster beginnen","Stab während Arbeit aufhängen","4x Projektlänge für Fäden"]},
+  {name:"Kerzen gießen",category:"deko",icon:"🕯️",difficulty:"Anfänger",description:"Duftkerzen selbst herstellen",materials:["Kerzenwachs/Sojawachs","Dochte","Formen/Gläser","Duftöle","Farbstoffe","Thermometer"],steps:[{title:"Docht",description:"Docht am Boden fixieren (Wachs-Tropfen/Klebepunkt). Oben mittig mit Holzstab/Dochthalter halten.",icon:"📍"},{title:"Schmelzen",description:"Wachs im Wasserbad auf 70-80°C schmelzen. Mit Thermometer kontrollieren.",icon:"🔥"},{title:"Duft/Farbe",description:"Bei 65°C Duftöl (ca. 10% Wachsmenge) und Farbstoff hinzufügen. Gut durchrühren.",icon:"🎨"},{title:"Gießen",description:"Wachs langsam in Form gießen. Komplett aushärten (4-24h je nach Größe). Docht auf 1cm kürzen.",icon:"💧"}],tips:["Sojawachs brennt sauberer","Wachs nicht überhitzen","24-48h reifen lassen"]},
+  {name:"Trockenblumen",category:"deko",icon:"🌾",difficulty:"Anfänger",description:"Langlebige Blumendeko",materials:["Frische Blumen","Schnur","Vase/Rahmen","Schere","Haarspray"],steps:[{title:"Vorbereiten",description:"Frische Blumen in vollem Zustand wählen. Untere Blätter entfernen. 3-5 Stiele mit Schnur zusammenbinden.",icon:"💐"},{title:"Trocknen",description:"Sträuße kopfüber an dunklem, trockenem, luftigem Ort aufhängen. Keine direkte Sonne. 2-4 Wochen.",icon:"☀️"},{title:"Arrangieren",description:"Getrocknete Blumen in Vase, zu Sträußen binden oder in Rahmen kleben. Texturen und Farben kombinieren.",icon:"🎨"},{title:"Versiegeln",description:"Optional mit Haarspray einsprühen für Farberhalt und gegen Zerfall.",icon:"✨"}],tips:["Beste Blumen: Rosen, Lavendel, Strohblumen","Backofen für schneller","Staubfrei halten"]},
+  {name:"Mosaikkunst",category:"deko",icon:"🎨",difficulty:"Mittelschwer",description:"Bunte Mosaike gestalten",materials:["Mosaiksteine/Fliesen","Basis (Topf/Rahmen)","Fliesenkleber","Fugenmasse","Schwamm"],steps:[{title:"Design",description:"Muster auf Papier skizzieren. Mosaiksteine trocken auf Basis auslegen zum Testen.",icon:"✏️"},{title:"Kleben",description:"Fliesenkleber auf kleinen Bereich auftragen. Mosaiksteine eindrücken, kleine Abstände lassen. Abschnittsweise arbeiten.",icon:"🔨"},{title:"Trocknen",description:"Kleber 24h trocknen lassen. Stück nicht bewegen.",icon:"⏰"},{title:"Verfugen",description:"Fugenmasse anmischen. Mit Schwamm in Zwischenräume verteilen. Überschüsse abwischen. Nach 20 Min mit trockenem Tuch polieren.",icon:"✨"}],tips:["Handschuhe tragen","Verschiedene Farben für Kontrast","Außen mit Lack versiegeln"]},
+  {name:"Pompons",category:"deko",icon:"🎈",difficulty:"Anfänger",description:"Flauschige Deko-Pompons",materials:["Wolle","Pappe","Schere","Zirkel","Nadel"],steps:[{title:"Schablone",description:"Zwei identische Ringe auf Pappe zeichnen (Außen z.B. 8cm, Innen 3cm). Beide ausschneiden.",icon:"⭕"},{title:"Wickeln",description:"Beide Ringe aufeinander legen. Wolle durch Loch und um Ring wickeln bis Loch gefüllt. Je mehr, desto dichter.",icon:"🌀"},{title:"Aufschneiden",description:"Wolle am Außenrand zwischen Pappen durchschneiden. Faden zwischen Pappen schieben und fest knoten.",icon:"✂️"},{title:"Formen",description:"Pappschablonen entfernen. Pompon schütteln. Vorstehende Fäden für runde Form schneiden.",icon:"✨"}],tips:["Mehrere Wollfarben","Sehr dicht wickeln","Festere Wolle"]},
+  {name:"Brot backen",category:"küche",icon:"🍞",difficulty:"Mittelschwer",description:"Frisches Brot selbst backen",materials:["500g Mehl","300ml Wasser","10g Salz","7g Trockenhefe","Schüssel","Backofen"],steps:[{title:"Teig",description:"Alle Zutaten in Schüssel mischen. 10 Min zu glattem Teig kneten. Sollte leicht klebrig sein.",icon:"🥣"},{title:"Gehen lassen",description:"Schüssel abdecken. An warmem Ort 1-2 Std gehen lassen bis doppelte Größe.",icon:"⏰"},{title:"Formen",description:"Kurz durchkneten. Zu Laib formen. Auf Backpapier legen, weitere 30 Min gehen lassen.",icon:"👋"},{title:"Backen",description:"Ofen auf 220°C vorheizen. Brot oben einritzen. 30-35 Min backen bis goldbraun und hohl klingend.",icon:"🔥"}],tips:["Lauwarmes Wasser für Hefe","Lange Gehzeit = besserer Geschmack","Wasserschale im Ofen für Dampf"]},
+  {name:"Marmelade einkochen",category:"küche",icon:"🍓",difficulty:"Anfänger",description:"Eigene Fruchtmarmelade",materials:["1kg Früchte","500g Gelierzucker 2:1","Zitronensaft","Einmachgläser","Topf"],steps:[{title:"Vorbereiten",description:"Früchte waschen, putzen, klein schneiden. 1kg abwiegen.",icon:"🍓"},{title:"Kochen",description:"Früchte, Gelierzucker, Zitronensaft in Topf. Unter Rühren zum Kochen bringen. 4 Min sprudelnd kochen.",icon:"🔥"},{title:"Gelierprobe",description:"Tropfen auf kalten Teller. Wird er fest? Dann fertig.",icon:"💧"},{title:"Abfüllen",description:"Heiße Marmelade in sterile Gläser füllen. Sofort verschließen. 5 Min auf Kopf drehen.",icon:"🏺"}],tips:["Gläser in kochendem Wasser sterilisieren","Reife, nicht überreife Früchte","Mit Datum und Sorte beschriften"]},
+  {name:"Seife sieden",category:"küche",icon:"🧼",difficulty:"Fortgeschritten",description:"Naturseifen selbst herstellen",materials:["Öle (Oliven-/Kokos-)","NaOH (Ätznatron)","Dest. Wasser","Ätherische Öle","Schutzausrüstung","Formen"],steps:[{title:"Sicherheit",description:"Schutzbrille, Handschuhe, lange Kleidung tragen. Gut belüftet arbeiten. NaOH ist ätzend!",icon:"⚠️"},{title:"Lauge",description:"NaOH langsam ins kalte Wasser (nie umgekehrt!). Rühren bis gelöst. Wird sehr heiß. Auf ca. 40°C abkühlen.",icon:"🧪"},{title:"Öle",description:"Öle auf ca. 40°C erwärmen. Lauge langsam eingießen. Mit Stabmixer bis zur 'Spur' (puddingartig) mixen.",icon:"🥣"},{title:"Formen/Reifen",description:"In Formen füllen. 24h isolieren (in Handtücher). Nach 48h aus Form. 4-6 Wochen reifen.",icon:"⏳"}],tips:["Rezept mit Seifenrechner","Nie ohne Schutzausrüstung","Geduld beim Reifen"]},
+  {name:"Aquarellmalerei",category:"papier",icon:"🎨",difficulty:"Anfänger",description:"Mit Wasserfarben malen",materials:["Aquarellfarben","Aquarellpapier","Pinsel","Wasser","Palette"],steps:[{title:"Nass-in-Nass",description:"Papier befeuchten. Farbe auftragen - verläuft weich.",icon:"💧"},{title:"Lasuren",description:"Schichten trocknen lassen vor neuen. Tiefe aufbauen.",icon:"🌈"},{title:"Details",description:"Weniger Wasser für präzise Linien und Details.",icon:"🖌️"},{title:"Trocknen",description:"Werk vollständig trocknen. Unter Glas rahmen.",icon:"🖼️"}],tips:["Hell nach dunkel arbeiten","Gutes Papier mind. 300g","Happy Accidents akzeptieren"]},
+  {name:"Kalligrafie",category:"papier",icon:"✒️",difficulty:"Mittelschwer",description:"Schöne Schriftkunst",materials:["Kalligrafie-Feder","Tinte","Übungspapier","Lineal","Federhalter"],steps:[{title:"Linien",description:"Erst Auf-/Abstriche üben. Aufstriche dünn, Abstriche dick.",icon:"📏"},{title:"Buchstaben",description:"Mit einfachen Buchstaben beginnen. Konstanten Winkel halten.",icon:"A"},{title:"Wörter",description:"Buchstaben harmonisch verbinden. Auf Abstände achten.",icon:"📝"},{title:"Komposition",description:"Vollständige Texte mit ausgewogenen Zeilen gestalten.",icon:"🎨"}],tips:["Täglich 15 Min üben","Hand entspannen","Vorlagenbögen verwenden"]},
+  {name:"Batiken",category:"textil",icon:"🌈",difficulty:"Anfänger",description:"Stoffe mit Batik färben",materials:["Weißer Baumwollstoff","Textilfarben","Gummibänder","Eimer","Salz"],steps:[{title:"Abbinden",description:"Stoff mit Gummis abbinden. Verschiedene Muster durch verschiedenes Abbinden.",icon:"🎀"},{title:"Farbe",description:"Textilfarbe in heißem Wasser mit Salz auflösen.",icon:"🥣"},{title:"Färben",description:"Stoff 30-60 Min in Farbe tauchen. Gelegentlich bewegen.",icon:"🌊"},{title:"Fixieren",description:"Ausspülen, Gummis entfernen. Separat waschen. Durch Bügeln fixieren.",icon:"🔥"}],tips:["Mit Handschuhen","Mit mehreren Farben experimentieren","Stoff vor Färben anfeuchten"]},
+  {name:"Stempeln auf Stoff",category:"textil",icon:"🖌️",difficulty:"Anfänger",description:"Textilien mit Stempeln gestalten",materials:["Moosgummi","Holzblock","Textilfarbe","Stoff","Kleber"],steps:[{title:"Stempel",description:"Motiv auf Moosgummi zeichnen. Ausschneiden und auf Holzblock kleben.",icon:"✂️"},{title:"Farbe",description:"Stempel in Textilfarbe tauchen oder mit Pinsel auftragen.",icon:"🎨"},{title:"Stempeln",description:"Fest auf Stoff drücken. Gerade hochheben.",icon:"📍"},{title:"Fixieren",description:"Trocknen lassen. Von Rückseite bügeln zur Fixierung.",icon:"🔥"}],tips:["Auf Stoffrest testen","Feste glatte Stoffe","Stempel sofort reinigen"]},
+  {name:"Korbflechten Weide",category:"holz",icon:"🧺",difficulty:"Mittelschwer",description:"Körbe aus Weide flechten",materials:["Peddigrohr/Weidenruten","Schere","Wasser","Ahle"],steps:[{title:"Einweichen",description:"Flechtmaterial 30-60 Min in Wasser bis biegsam einweichen.",icon:"💧"},{title:"Boden",description:"Speichen sternförmig auslegen. Spiralförmig darum flechten.",icon:"⭐"},{title:"Wände",description:"Speichen nach oben biegen. Abwechselnd vor und hinter Speichen flechten.",icon:"⬆️"},{title:"Rand",description:"Enden zurück in Korb flechten oder dekorativen Rand formen.",icon:"🔄"}],tips:["Material während Arbeit feucht","Mit kleinem Korb beginnen","Ruten fest ziehen"]},
+  {name:"Möbel polstern",category:"textil",icon:"🛋️",difficulty:"Fortgeschritten",description:"Alte Stühle neu beziehen",materials:["Polsterstoff","Schaumstoff","Polsternägel","Hammer","Tacker"],steps:[{title:"Entfernen",description:"Alten Stoff und Schaumstoff vorsichtig entfernen. Als Vorlage behalten.",icon:"🔨"},{title:"Schaumstoff",description:"Neuen Schaumstoff nach alter Form zuschneiden. Auf Sitzfläche kleben.",icon:"✂️"},{title:"Befestigen",description:"Stoff über Schaumstoff legen. Von Mitte zu Ecken tackern. Straff ziehen.",icon:"📌"},{title:"Ecken",description:"Ecken ordentlich falten. Überschuss abschneiden. Mit Polsternägeln befestigen.",icon:"✨"}],tips:["Festen Polsterstoff","Symmetrisch von allen Seiten","Gleichmäßig festziehen"]},
+  {name:"Lederarbeiten",category:"textil",icon:"👜",difficulty:"Mittelschwer",description:"Einfache Lederwaren",materials:["Leder","Ledermesser","Ahle","Gewachster Faden","Nadeln"],steps:[{title:"Zuschneiden",description:"Muster auf Leder zeichnen. Mit scharfem Ledermesser entlang Lineal schneiden.",icon:"✂️"},{title:"Löcher",description:"Nahtlinien markieren. Mit Ahle gleichmäßige Löcher vorstechen.",icon:"🔴"},{title:"Nähen",description:"Sattlernaht: zwei Nadeln am selben Faden, durch jedes Loch von beiden Seiten.",icon:"🧵"},{title:"Kanten",description:"Kanten mit Schleifpapier glätten. Kantenfarbe auftragen oder mit Bienenwachs polieren.",icon:"✨"}],tips:["Pflanzlich gegerbtes Leder","Werkzeuge scharf","Auf Lederresten üben"]},
+  {name:"Windspiele",category:"deko",icon:"🎐",difficulty:"Anfänger",description:"Klangvolle Windspiele",materials:["Metallrohre/Bambus/Muscheln","Schnur","Holzring/Ast","Perlen","Bohrer"],steps:[{title:"Elemente",description:"Rohre in verschiedene Längen schneiden (verschiedene Töne). Löcher zum Aufhängen bohren.",icon:"🔧"},{title:"Aufhängen",description:"Schnüre an Ring binden. Klingende Elemente in verschiedenen Höhen befestigen.",icon:"🎯"},{title:"Klöppel",description:"In Mitte Klöppel (Stein, Holz) hängen, der Röhren anschlägt.",icon:"🔔"},{title:"Dekorieren",description:"Perlen an Schnüren hinzufügen. An luftigem Ort aufhängen.",icon:"✨"}],tips:["Längere Rohre = tiefere Töne","Klang vor Aufhängen testen","Wetterfeste Materialien für draußen"]},
+  {name:"Traumfänger",category:"deko",icon:"🌙",difficulty:"Anfänger",description:"Traditionelle Traumfänger",materials:["Metall-/Weidenring","Garn/Schnur","Federn","Perlen","Kleber"],steps:[{title:"Ring",description:"Ring fest mit Garn umwickeln. Anfang und Ende mit Kleber fixieren.",icon:"⭕"},{title:"Netz",description:"Faden am Ring knoten. Quer durch Ring führen und knoten. Spiralförmig zur Mitte arbeiten.",icon:"🕸️"},{title:"Perlen",description:"Perlen auf Faden während Netz-Knüpfen einflechten.",icon:"📿"},{title:"Federn",description:"3-5 Fäden unten am Ring knoten. Federn und Perlen an Enden befestigen.",icon:"🪶"}],tips:["Garn straff für ordentliches Netz","Naturfedern verwenden","Traditionell Hirschleder"]},
+  {name:"Beton-Deko",category:"deko",icon:"🗿",difficulty:"Mittelschwer",description:"Deko-Objekte aus Beton",materials:["Bastelbeton","Formen","Wasser","Rührschüssel","Öl","Schleifpapier"],steps:[{title:"Form",description:"Formen mit Öl einfetten. Erleichtert Lösen.",icon:"💧"},{title:"Anmischen",description:"Beton mit Wasser nach Anleitung mischen. Konsistenz: dicker Joghurt.",icon:"🥣"},{title:"Gießen",description:"Beton in Form füllen. An Form klopfen um Luftblasen zu entfernen.",icon:"📥"},{title:"Aushärten",description:"24-48h trocknen. Aus Form lösen. Raue Kanten schleifen.",icon:"⏰"}],tips:["Handschuhe - Beton alkalisch","Zügig arbeiten","Mit Betonsiegel für Outdoor versiegeln"]},
+  {name:"Serviettentechnik",category:"deko",icon:"🎨",difficulty:"Anfänger",description:"Objekte mit Servietten gestalten",materials:["Servietten mit Motiv","Objekt (Holz/Glas)","Serviettenkleber","Pinsel","Lack"],steps:[{title:"Motiv",description:"Oberste Schicht der Serviette abtrennen. Motiv ausschneiden oder reißen.",icon:"✂️"},{title:"Kleber",description:"Objekt mit Serviettenkleber einstreichen.",icon:"🖌️"},{title:"Aufkleben",description:"Motiv auflegen. Vorsichtig von Mitte nach außen glatt streichen. Falten vermeiden.",icon:"📄"},{title:"Versiegeln",description:"Trocknen. 2-3 Schichten Kleber oder Lack auftragen.",icon:"✨"}],tips:["Trockener Pinsel über nasse Servietten","Dünne Servietten am besten","Luftblasen sofort entfernen"]},
+  {name:"Kränze binden",category:"deko",icon:"🌿",difficulty:"Anfänger",description:"Dekorative Kränze",materials:["Kranzrohling","Bindedraht","Dekomaterial","Heißkleber","Schere"],steps:[{title:"Basis",description:"Rohling mit Moos oder Band umwickeln (optional).",icon:"⭕"},{title:"Befestigen",description:"Zweige, Blumen mit Draht festbinden. In eine Richtung für gleichmäßigen Look.",icon:"🌸"},{title:"Schichten",description:"Schichten hinzufügen bis Kranz dicht. Texturen und Farben mischen.",icon:"🌿"},{title:"Dekorieren",description:"Besondere Elemente (Schleifen, Beeren, Figuren) mit Heißkleber festkleben.",icon:"🎀"}],tips:["Frische Materialien halten 2-3 Wochen","Getrocknete/künstliche für länger","Mit stabilem Band aufhängen"]},
+  {name:"Siebdruck",category:"textil",icon:"🖨️",difficulty:"Mittelschwer",description:"Designs auf Stoff drucken",materials:["Siebrahmen","Rakel","Textilfarbe","Motiv"],steps:[{title:"Sieb",description:"Sieb beschichten und Motiv belichten.",icon:"🎨"},{title:"Drucken",description:"Stoff unter Sieb legen, Farbe mit Rakel durchziehen.",icon:"🖨️"},{title:"Fixieren",description:"Trocknen und bügeln zur Fixierung.",icon:"🔥"}],tips:["Dichte Gewebe verwenden","In Schichten bei mehreren Farben"]},
+  {name:"Wolle spinnen",category:"textil",icon:"🧶",difficulty:"Mittelschwer",description:"Wolle zu Garn spinnen",materials:["Kardierte Wolle","Spindel/Spinnrad"],steps:[{title:"Vorbereiten",description:"Wolle zu lockerem Vlies kardieren.",icon:"🐑"},{title:"Spinnen",description:"Fasern ausziehen und Spindel drehen.",icon:"🌀"},{title:"Zwirnen",description:"Zwei Fäden verzwirnen für stärkeres Garn.",icon:"🧵"}],tips:["Gleichmäßiger Zug = gleichmäßiges Garn"]},
+  {name:"Webrahmen",category:"textil",icon:"🧵",difficulty:"Mittelschwer",description:"Stoffe weben",materials:["Webrahmen","Garn","Webschiffchen"],steps:[{title:"Kette",description:"Längsfäden auf Rahmen spannen.",icon:"↕️"},{title:"Weben",description:"Schiffchen über-unter durch Fäden führen.",icon:"↔️"},{title:"Festklopfen",description:"Jede Reihe festklopfen.",icon:"🔨"}],tips:["Gleichmäßige Spannung halten"]},
+  {name:"Kleid nähen",category:"textil",icon:"👗",difficulty:"Fortgeschritten",description:"Einfaches Kleid nähen",materials:["Schnittmuster","Stoff","Nähmaschine","Reißverschluss"],steps:[{title:"Zuschneiden",description:"Nach Schnittmuster zuschneiden.",icon:"✂️"},{title:"Heften",description:"Teile zusammenheften.",icon:"📌"},{title:"Nähen",description:"Alle Nähte nähen.",icon:"🪡"},{title:"Finish",description:"Säume und Reißverschluss einnähen.",icon:"✨"}],tips:["Passform während Nähen testen"]},
+  {name:"Klöppeln",category:"textil",icon:"🧵",difficulty:"Fortgeschritten",description:"Spitze klöppeln",materials:["Klöppel","Klöppelkissen","Garn","Muster"],steps:[{title:"Muster",description:"Muster auf Kissen aufstecken.",icon:"📍"},{title:"Klöppeln",description:"Klöppel nach Muster kreuzen und drehen.",icon:"🔄"},{title:"Folgen",description:"Spitzenmuster durcharbeiten.",icon:"〰️"}],tips:["Braucht Geduld und Übung"]},
+  {name:"Papierkörbe",category:"papier",icon:"🗑️",difficulty:"Anfänger",description:"Recycling-Körbe aus Zeitung",materials:["Zeitungspapier","Kleber","Schere","Karton"],steps:[{title:"Röllchen",description:"Zeitungsstreifen zu Röhrchen rollen.",icon:"📰"},{title:"Boden",description:"Röhrchen sternförmig auf Karton kleben.",icon:"⭐"},{title:"Flechten",description:"Weitere Röhrchen um Basis flechten.",icon:"🧺"},{title:"Versiegeln",description:"Mit verdünntem Leim streichen.",icon:"🖌️"}],tips:["Lackieren für Stabilität"]},
+  {name:"Lesezeichen",category:"papier",icon:"📖",difficulty:"Anfänger",description:"Kreative Lesezeichen",materials:["Karton","Schere","Sticker","Bänder","Locher"],steps:[{title:"Zuschneiden",description:"Karton in Lesezeichenform schneiden.",icon:"✂️"},{title:"Dekorieren",description:"Bemalen oder bekleben.",icon:"🎨"},{title:"Lochen",description:"Oben Loch stanzen.",icon:"⭕"},{title:"Band",description:"Band durchfädeln.",icon:"🎀"}],tips:["Laminieren für Haltbarkeit"]},
+  {name:"Papiertüten",category:"papier",icon:"🛍️",difficulty:"Anfänger",description:"Geschenktüten selbst falten",materials:["Papier","Kleber","Schnur","Locher"],steps:[{title:"Falten",description:"Papier zu Tütenform falten.",icon:"📄"},{title:"Kleben",description:"Seiten zusammenkleben.",icon:"🖇️"},{title:"Boden",description:"Boden einfalten.",icon:"⬜"},{title:"Henkel",description:"Lochen und Schnur befestigen.",icon:"🎀"}],tips:["Festes Papier verwenden"]},
+  {name:"Kartonmöbel",category:"papier",icon:"📦",difficulty:"Mittelschwer",description:"Möbel aus Pappe konstruieren",materials:["Dicke Pappe","Cutter","Kleber","Lineal"],steps:[{title:"Design",description:"Möbel planen und zeichnen.",icon:"✏️"},{title:"Ausschneiden",description:"Alle Teile ausschneiden.",icon:"✂️"},{title:"Zusammenbauen",description:"Teile kleben und stecken.",icon:"🔨"},{title:"Verstärken",description:"Mehrere Schichten für Stabilität kleben.",icon:"💪"}],tips:["Wellpappe verwenden"]}
+];
+let filteredCrafts = [...crafts];
+const modal = document.getElementById('tutorialModal');
+const closeBtn = document.getElementsByClassName('close')[0];
+function renderCrafts(craftsToRender) {
+    const grid = document.getElementById('craftsGrid');
+    if (craftsToRender.length === 0) {
+        grid.innerHTML = '<div class="no-results">Keine Handwerke gefunden. Versuche einen anderen Suchbegriff.</div>';
+        return;
+    }
+    grid.innerHTML = craftsToRender.map(craft => `
+        <div class="craft-card" onclick="showTutorial('${craft.name.replace(/'/g, "\\'")}')">
+            <div class="craft-image">${craft.icon}</div>
+            <div class="craft-content">
+                <div class="craft-title">${craft.name}</div>
+                <div class="craft-category">${getCategoryName(craft.category)}</div>
+                <div class="craft-description">${craft.description}</div>
+            </div>
+        </div>
+    `).join('');
+}
+function getCategoryName(category) {
+    const names = {
+        'textil': 'Textil & Handarbeit',
+        'holz': 'Holzarbeiten',
+        'papier': 'Papier & Basteln',
+        'metall': 'Metallarbeiten',
+        'keramik': 'Keramik & Ton',
+        'schmuck': 'Schmuckherstellung',
+        'deko': 'Dekoration',
+        'küche': 'Küche & Kulinarik'
+    };
+    return names[category] || category;
+}
+window.showTutorial = function(craftName) {
+    const craft = crafts.find(c => c.name === craftName);
+    if (!craft) return;
+    const content = `
+        <div class="tutorial-header">
+            <h2 class="tutorial-title">${craft.icon} ${craft.name}</h2>
+            <span class="difficulty">Schwierigkeit: ${craft.difficulty}</span>
+        </div>
+        <div class="materials">
+            <h3>📋 Benötigte Materialien</h3>
+            <ul>${craft.materials.map(m => `<li>${m}</li>`).join('')}</ul>
+        </div>
+        <div class="steps">
+            <h3>Schritt-für-Schritt Anleitung</h3>
+            ${craft.steps.map((step, index) => `
+                <div class="step">
+                    <div class="step-number">Schritt ${index + 1}</div>
+                    <div class="step-title">${step.title}</div>
+                    <div class="step-image">${step.icon}</div>
+                    <div class="step-description">${step.description}</div>
+                </div>
+            `).join('')}
+        </div>
+        ${craft.tips ? `
+        <div class="tips">
+            <h3>💡 Tipps & Tricks</h3>
+            <ul>${craft.tips.map(t => `<li>${t}</li>`).join('')}</ul>
+        </div>
+        ` : ''}
+    `;
+    document.getElementById('tutorialContent').innerHTML = content;
+    modal.style.display = 'block';
+};
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    filteredCrafts = crafts.filter(craft => 
+        craft.name.toLowerCase().includes(searchTerm) ||
+        craft.description.toLowerCase().includes(searchTerm) ||
+        craft.category.toLowerCase().includes(searchTerm)
+    );
+    renderCrafts(filteredCrafts);
+});
+document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const category = this.dataset.category;
+        if (category === 'all') {
+            filteredCrafts = [...crafts];
+        } else {
+            filteredCrafts = crafts.filter(c => c.category === category);
         }
-
-        function init() {
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-            requestAnimationFrame(animate);
-        }
-
-        init();
-        animate();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // Scroll Reveal
-        const sections = document.querySelectorAll('section');
-        
-        const revealSection = () => {
-            sections.forEach(section => {
-                const sectionTop = section.getBoundingClientRect().top;
-                const windowHeight = window.innerHeight;
-                
-                if (sectionTop < windowHeight * 0.75) {
-                    section.classList.add('visible');
-                }
-            });
-        };
-
-        window.addEventListener('scroll', revealSection);
-        revealSection();
-
-        // Anniversary Date Reveal and Countdown
-        const anniversaryDate = new Date('2025-10-25T15:00:00');
-        let dateRevealed = false;
-
-        function revealDate() {
-            const dateDisplay = document.getElementById('dateReveal');
-            const breakdown = document.getElementById('timeBreakdown');
-            
-            if (!dateRevealed) {
-                dateDisplay.textContent = '25.10.2025, 15:00 Uhr';
-                dateRevealed = true;
-                breakdown.style.opacity = '1';
-                updateTimeBreakdown();
-                // Update every second
-                setInterval(updateTimeBreakdown, 1000);
-            }
-        }
-
-        function updateTimeBreakdown() {
-            const now = new Date();
-            const diff = now - anniversaryDate;
-            
-            const seconds = Math.floor(diff / 1000);
-            const minutes = Math.floor(seconds / 60);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            const weeks = Math.floor(days / 7);
-            const months = Math.floor(days / 30.44); // Average month length
-            
-            const breakdown = document.getElementById('timeBreakdown');
-            breakdown.innerHTML = `
-                ${months.toLocaleString('de-DE')} Monate<br>
-                ${weeks.toLocaleString('de-DE')} Wochen<br>
-                ${days.toLocaleString('de-DE')} Tage<br>
-                ${hours.toLocaleString('de-DE')} Stunden<br>
-                ${minutes.toLocaleString('de-DE')} Minuten<br>
-                ${seconds.toLocaleString('de-DE')} Sekunden
-            `;
-        }
-
-        // Love Slider
-        function updateLoveLevel(value) {
-            const label = document.getElementById('sliderLabel');
-            if (value == 100) {
-                label.textContent = 'Unendlich';
-            } else if (value > 75) {
-                label.textContent = 'Sehr vai';
-            } else if (value > 50) {
-                label.textContent = 'Vai';
-            } else if (value > 25) {
-                label.textContent = 'Gnua';
-            } else {
-                label.textContent = 'A bissal';
-            }
-        }
-
-        // Memory Reveal
-        function revealMemory(card) {
-            const text = card.querySelector('.reveal-text');
-            text.classList.toggle('show');
-        }
-
-        // Secret Message
-        function revealMessage() {
-            const message = document.getElementById('secretMessage');
-            const messages = [
-                'Danke dass du du bist.',
-                'Mid dir is ois leichter.',
-                'Du mochst mei Welt schena.',
-                'I bin so froh dass di gibt.',
-                'Du bist mei Lieblingsmensch.'
-            ];
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            message.textContent = randomMessage;
-            message.classList.add('show');
-        }
+        renderCrafts(filteredCrafts);
+    });
+});
+closeBtn.onclick = function() { modal.style.display = 'none'; };
+window.onclick = function(event) { if (event.target == modal) { modal.style.display = 'none'; } };
+renderCrafts(crafts);
     </script>
 </body>
 </html>
