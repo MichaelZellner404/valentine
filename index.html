@@ -358,7 +358,7 @@
     <!-- Section 4 - Slider Interaction -->
     <section class="interactive-section">
         <div class="content-box">
-            <h2>Wi sehr?</h2>
+            <h2>Wie sehr?</h2>
             <div class="slider-container">
                 <input type="range" min="0" max="100" value="100" id="loveSlider" oninput="updateLoveLevel(this.value)">
                 <div class="slider-label" id="sliderLabel">Unendlich</div>
@@ -530,13 +530,13 @@
             if (value == 100) {
                 label.textContent = 'Unendlich';
             } else if (value > 75) {
-                label.textContent = 'Sehr viel';
+                label.textContent = 'Sehr vai';
             } else if (value > 50) {
-                label.textContent = 'Viel';
+                label.textContent = 'Vai';
             } else if (value > 25) {
-                label.textContent = 'Genug';
+                label.textContent = 'Gnua';
             } else {
-                label.textContent = 'Ein bisschen';
+                label.textContent = 'A bissal';
             }
         }
 
@@ -550,11 +550,11 @@
         function revealMessage() {
             const message = document.getElementById('secretMessage');
             const messages = [
-                'Danke, dass du du bist.',
-                'Mit dir ist alles leichter.',
-                'Du machst meine Welt schöner.',
-                'Ich bin so froh, dass es dich gibt.',
-                'Du bist mein Lieblingsmensch.'
+                'Danke dass du du bist.',
+                'Mid dir is ois leichter.',
+                'Du mochst mei Welt schena.',
+                'I bin so froh dass di gibt.',
+                'Du bist mei Lieblingsmensch.'
             ];
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
             message.textContent = randomMessage;
