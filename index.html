@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14. Februar 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-mid: #1a1a1a;
+            --accent: #ff1493;
+            --accent-light: #ff69b4;
+            --text-muted: #666;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--accent-light);
+            font-family: 'Cormorant Garamond', serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1.2s ease, transform 1.2s ease;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Section */
+        .hero {
+            flex-direction: column;
+            text-align: center;
+            background: radial-gradient(ellipse at center, rgba(255, 20, 147, 0.1) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 0.9;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .date {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            color: var(--text-muted);
+            margin-top: 1rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, 10px); }
+        }
+
+        /* Content Sections */
+        .content-box {
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .content-box h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 400;
+            margin-bottom: 2rem;
+            color: var(--accent);
+        }
+
+        .content-box p {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            line-height: 1.8;
+            font-weight: 300;
+            color: var(--accent-light);
+        }
+
+        /* Interactive Elements */
+        .interactive-section {
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .counter-display {
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 2rem 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .counter-display:hover {
+            transform: scale(1.1);
+        }
+
+        .subtle-button {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent-light);
+            padding: 1rem 3rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subtle-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .subtle-button:hover::before {
+            left: 0;
+        }
+
+        .subtle-button:hover {
+            color: var(--bg-dark);
+            border-color: var(--accent);
+        }
+
+        /* Canvas Background */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Reveal Text */
+        .reveal-text {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-style: italic;
+            line-height: 2;
+            max-width: 600px;
+            margin: 2rem auto;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .reveal-text.show {
+            opacity: 1;
+        }
+
+        /* Memory Lane */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 3rem auto;
+        }
+
+        .memory-card {
+            background: rgba(255, 20, 147, 0.05);
+            border: 1px solid rgba(255, 105, 180, 0.2);
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .memory-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 105, 180, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .memory-card:hover::before {
+            left: 100%;
+        }
+
+        .memory-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .memory-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .memory-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--accent-light);
+        }
+
+        /* Final Section */
+        .final {
+            background: radial-gradient(ellipse at center, rgba(255, 20, 147, 0.15) 0%, transparent 70%);
+        }
+
+        .message-reveal {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            text-align: center;
+            line-height: 1.4;
+            opacity: 0;
+            animation: fadeIn 2s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Slider */
+        .slider-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 3rem auto;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 105, 180, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            cursor: pointer;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
+
+        .slider-label {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            color: var(--accent-light);
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 3rem 1.5rem;
+            }
+            
+            .memory-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Hero -->
+    <section class="hero visible">
+        <h1>14.02</h1>
+        <p class="date">MMXXVI</p>
+        <div class="scroll-indicator">↓ scrollen</div>
+    </section>
+
+    <!-- Section 1 -->
+    <section>
+        <div class="content-box">
+            <h2>Ein besonderer Tag</h2>
+            <p>Nicht weil das Datum es vorschreibt, sondern weil jeder Moment mit dir besonders ist.</p>
+        </div>
+    </section>
+
+    <!-- Section 2 - Interactive Counter -->
+    <section class="interactive-section">
+        <div class="content-box">
+            <h2>Wir sind zusammen seit</h2>
+            <div class="counter-display" id="dateReveal" onclick="revealDate()" style="font-size: clamp(2rem, 5vw, 3.5rem); cursor: pointer;">
+                ❤️
+            </div>
+            <div id="timeBreakdown" style="margin-top: 2rem; font-size: 1.3rem; line-height: 2; opacity: 0; transition: opacity 0.6s ease;"></div>
+        </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section>
+        <div class="content-box">
+            <h2>Was bedeutet das?</h2>
+            <p>Es bedeutet, dass ich dankbar bin. Für die kleinen Dinge. Die großen Abenteuer. Und alles dazwischen.</p>
+        </div>
+    </section>
+
+    <!-- Section 4 - Slider Interaction -->
+    <section class="interactive-section">
+        <div class="content-box">
+            <h2>Wie sehr?</h2>
+            <div class="slider-container">
+                <input type="range" min="0" max="100" value="100" id="loveSlider" oninput="updateLoveLevel(this.value)">
+                <div class="slider-label" id="sliderLabel">Unendlich</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5 - Memory Cards -->
+    <section>
+        <div class="content-box">
+            <h2>Erinnerungen</h2>
+            <div class="memory-grid">
+                <div class="memory-card" onclick="revealMemory(this)">
+                    <h3>Der erste Moment</h3>
+                    <p class="reveal-text">Als ich wusste, dass du etwas Besonderes bist.</p>
+                </div>
+                <div class="memory-card" onclick="revealMemory(this)">
+                    <h3>Die Lacher</h3>
+                    <p class="reveal-text">Die bis in die Nacht dauern und alles vergessen lassen.</p>
+                </div>
+                <div class="memory-card" onclick="revealMemory(this)">
+                    <h3>Die Stille</h3>
+                    <p class="reveal-text">In der wir uns ohne Worte verstehen.</p>
+                </div>
+                <div class="memory-card" onclick="revealMemory(this)">
+                    <h3>Die Zukunft</h3>
+                    <p class="reveal-text">Die wir zusammen schreiben werden.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 6 - Reveal Message -->
+    <section>
+        <div class="content-box">
+            <button class="subtle-button" onclick="revealMessage()">Eine Nachricht für dich</button>
+            <p class="reveal-text" id="secretMessage" style="margin-top: 3rem;"></p>
+        </div>
+    </section>
+
+    <!-- Final Section -->
+    <section class="final">
+        <div class="message-reveal">
+            Ich liebe dich
+        </div>
+    </section>
+
+    <script>
+        // Particle Canvas Background
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 50;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 105, 180, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Scroll Reveal
+        const sections = document.querySelectorAll('section');
+        
+        const revealSection = () => {
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (sectionTop < windowHeight * 0.75) {
+                    section.classList.add('visible');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealSection);
+        revealSection();
+
+        // Anniversary Date Reveal and Countdown
+        const anniversaryDate = new Date('2025-10-25T15:00:00');
+        let dateRevealed = false;
+
+        function revealDate() {
+            const dateDisplay = document.getElementById('dateReveal');
+            const breakdown = document.getElementById('timeBreakdown');
+            
+            if (!dateRevealed) {
+                dateDisplay.textContent = '25.10.2025, 15:00 Uhr';
+                dateRevealed = true;
+                breakdown.style.opacity = '1';
+                updateTimeBreakdown();
+                // Update every second
+                setInterval(updateTimeBreakdown, 1000);
+            }
+        }
+
+        function updateTimeBreakdown() {
+            const now = new Date();
+            const diff = now - anniversaryDate;
+            
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            const weeks = Math.floor(days / 7);
+            const months = Math.floor(days / 30.44); // Average month length
+            
+            const breakdown = document.getElementById('timeBreakdown');
+            breakdown.innerHTML = `
+                ${months.toLocaleString('de-DE')} Monate<br>
+                ${weeks.toLocaleString('de-DE')} Wochen<br>
+                ${days.toLocaleString('de-DE')} Tage<br>
+                ${hours.toLocaleString('de-DE')} Stunden<br>
+                ${minutes.toLocaleString('de-DE')} Minuten<br>
+                ${seconds.toLocaleString('de-DE')} Sekunden
+            `;
+        }
+
+        // Love Slider
+        function updateLoveLevel(value) {
+            const label = document.getElementById('sliderLabel');
+            if (value == 100) {
+                label.textContent = 'Unendlich';
+            } else if (value > 75) {
+                label.textContent = 'Sehr viel';
+            } else if (value > 50) {
+                label.textContent = 'Viel';
+            } else if (value > 25) {
+                label.textContent = 'Genug';
+            } else {
+                label.textContent = 'Ein bisschen';
+            }
+        }
+
+        // Memory Reveal
+        function revealMemory(card) {
+            const text = card.querySelector('.reveal-text');
+            text.classList.toggle('show');
+        }
+
+        // Secret Message
+        function revealMessage() {
+            const message = document.getElementById('secretMessage');
+            const messages = [
+                'Danke, dass du du bist.',
+                'Mit dir ist alles leichter.',
+                'Du machst meine Welt schöner.',
+                'Ich bin so froh, dass es dich gibt.',
+                'Du bist mein Lieblingsmensch.'
+            ];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            message.textContent = randomMessage;
+            message.classList.add('show');
+        }
+    </script>
+</body>
+</html>
